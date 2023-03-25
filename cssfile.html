@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Indian Food Recipes</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f2f2f2;
+		}
+		h1 {
+			text-align: center;
+			margin-top: 50px;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 30px;
+			padding: 20px;
+			background-color: #ffffff;
+			border-radius: 10px;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+		}
+		label {
+			font-size: 1.2em;
+			margin-bottom: 10px;
+		}
+		input[type="text"] {
+			padding: 10px;
+			font-size: 1.2em;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+			width: 300px;
+			margin-bottom: 20px;
+		}
+		button[type="submit"] {
+			padding: 10px 20px;
+			font-size: 1.2em;
+			background-color: #4CAF50;
+			color: #ffffff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+			transition: background-color 0.3s ease;
+		}
+		button[type="submit"]:hover {
+			background-color: #3e8e41;
+		}
+		#results {
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 30px;
+			padding: 20px;
+			background-color: #ffffff;
+			border-radius: 10px;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+		}
+		h2 {
+			font-size: 1.5em;
+			margin-bottom: 5px;
+		}
+		img {
+			width: 250px;
+			height: 250px;
+			object-fit: cover;
+			margin-right: 20px;
+			margin-bottom: 20px;
+			border-radius: 10px;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+		}
+		a {
+			font-size: 1.2em;
+			color: #4CAF50;
+			text-decoration: none;
+			transition: color 0.3s ease;
+		}
+		a:hover {
+			color: #3e8e41;
+		}
+	</style>
+</head>
+<body>
+	<h1>Search for Indian Food Recipes</h1>
+	<form>
+		<label for="recipe">Enter a recipe name:</label>
+		<input type="text" id="recipe" name="recipe"><br>
+		<button type="submit">Search</button>
+	</form>
+	<div id="results">
+		<!-- The search results will be displayed here -->
+	</div>
+	<script>
+		// When the form is submitted, call the search function
+		document.querySelector('form').addEventListener('submit', search);
+
+		function search
+        () {
+// Prevent the default form submission behavior
+ event.preventDefault();
+		// Get the user input
+		let query = document.querySelector('#recipe').value;
+
+		// Clear the previous search results, if any
+		document.querySelector('#results').innerHTML = '';
+
+		// Make an AJAX request to the API endpoint
+		let xhr = new XMLHttpRequest();
+		let url = 'https://api.edamam.com/search?q=' + query + '&app_id=YOUR_APP_ID&app_key=YOUR_APP_KEY&from=0&to=9&cuisine=indian';
+		xhr.open('GET', url, true);
+		xhr.onload = function() {
+			if (this.status == 200) {
+				let data = JSON.parse(this.responseText);
+				displayResults(data.hits);
+			}
+		};
+		xhr.send();
+	}
+
+	function displayResults(results) {
+		// Loop through the search results and create HTML for each one
+		for (let i = 0; i < results.length; i++) {
+			let recipe = results[i].recipe;
+			let html = `
+				<div>
+					<h2>${recipe.label}</h2>
+					<img src="${recipe.image}" alt="${recipe.label}">
+					<p><strong>Ingredients:</strong> ${recipe.ingredientLines.join(', ')}</p>
+					<p><a href="${recipe.url}" target="_blank">View Recipe</a></p>
+				</div>
+			`;
+			// Add the HTML to the search results section
+			document.querySelector('#results').insertAdjacentHTML('beforeend', html);
+		}
+	}
+</script>
+</body>
+</html>
